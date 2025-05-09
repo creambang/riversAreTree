@@ -7,3 +7,8 @@
 * Chris Wong
 
 Use doubly linked list to structure the tree
+
+## How to run?
+```bash
+make
+```
