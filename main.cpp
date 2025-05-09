@@ -1,38 +1,32 @@
-#include "riverTree.hpp"
+#include "tree.hpp"
 
 int main() {
-    DoublyLinkedList mainRiver;
-    std::cout << "\nColumbia River Tree Structure: " << std::endl;
-    mainRiver.addNode("Astoria", "City", false, "", "Youngs", "Grays");
-    mainRiver.addNode("Rufus", "City", false);
-    // mainRiver.addNode("Wanapum", "Dam");
-    // mainRiver.addNode("Portland", "City");
-    // mainRiver.addNode("Cascade Locks", "City");
-    // mainRiver.addNode("Bonneville Dam", "Dam");
-    // mainRiver.addNode("The Dalles", "City");
-    // mainRiver.addNode("Rufus", "City");
-    // mainRiver.addNode("John Day", "Dam");
-    // mainRiver.addNode("Umatilla", "City");
-    // mainRiver.addNode("McNary", "Dam");
-    // mainRiver.addNode("Mattawa", "City");
-    // mainRiver.addNode("Priest Rapids", "Dam");
-    // mainRiver.addNode("Vantage", "City");
-    // mainRiver.addNode("Wanapum", "Dam");
-    // mainRiver.addNode("Wenatchee", "City");
-    // mainRiver.addNode("Rock Island", "Dam");
-    // mainRiver.addNode("Chelan County", "City");
-    // mainRiver.addNode("Rocky Reach", "Dam");
-    // mainRiver.addNode("Pateros", "City");
-    // mainRiver.addNode("Wells", "Dam");
-    // mainRiver.addNode("Bridgeport", "City");
-    // mainRiver.addNode("Chief Joseph", "Dam");
-    // mainRiver.addNode("Coulee City", "City");
-    // mainRiver.addNode("Grand Coulee", "Dam");
-    // mainRiver.addNode("Little Falls", "Dam");
-    // mainRiver.addNode("Long Lake", "Dam");
-    // mainRiver.addNode("Nine Mile Falls", "City");
-    // mainRiver.addNode("Monroe", "Dam");
+    Tree river;
+    river.addFeatureOnSpine("", "Lower Colombia", "Mouth");
+    river.addFeatureOnBranch("Lower Colombia", "Colombia River", "River", true);
+    river.addFeatureOnBranch("Colombia River", "Snake Trit", "Tributary", false);
+    river.addFeatureOnBranch("Lower Colombia", "Willamette River", "River", false);
+    river.addFeatureOnSpine("Lower Colombia", "Astoria", "City");
+    river.addFeatureOnSpine("Astoria", "St. Helens", "City");
+    river.addFeatureOnSpine("St. Helens", "Portland", "City");
+    river.addFeatureOnSpine("Portland", "Bonneville Dam",  "Dam");
+    river.addFeatureOnSpine("Bonneville Dam", "The Dalles", "Dam");
+    river.addFeatureOnSpine("The Dalles", "John Day", "Dam");
+    river.addFeatureOnSpine("John Day", "McNary", "Dam");
+    river.addFeatureOnSpine("McNary", "Priest Rapids", "Dam");
+    river.addFeatureOnSpine("Priest Rapids", "Wanapum", "Dam");
+    river.addFeatureOnSpine("Wanapum", "Rock Island", "Dam");
+    river.addFeatureOnSpine("Rock Island", "Rocky Reach", "Dam");
+    river.addFeatureOnSpine("Rocky Reach", "Wells", "Dam");
+    river.addFeatureOnSpine("Wells", "Chief Joseph", "Dam");
+    river.addFeatureOnSpine("Chief Joseph", "Grand Coulee", "Dam");
+    river.addFeatureOnSpine("Grand Coulee", "Little Falls", "Dam");
+    river.addFeatureOnSpine("Little Falls", "Long Lake", "Dam");
+    river.addFeatureOnSpine("Long Lake", "Nine Mile", "Dam");
+    river.addFeatureOnSpine("Nine Mile", "Monroe", "Tail");
 
-    mainRiver.display();
-    mainRiver.searchRoute("Astoria", "Portland"); // Example search for a node
+    river.printTree();
+    river.traverseTree();
+
+    return 0;
 }
