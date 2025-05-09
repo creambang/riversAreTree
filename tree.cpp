@@ -98,9 +98,14 @@ bool Tree::addFeatureOnSpine(const std::string& prevNode, const std::string& new
         return false;
     }
 
+    // currParent->next = new Node(newNode, type);
+    // currParent->next->parent = currParent->parent;
+    // return true;
+
     currParent->next = new Node(newNode, type);
-    currParent->next->parent = currParent->parent;
+    currParent->next->parent = currParent;
     return true;
+
 }
 
 void Tree::printHelper(Node* node, int indent) {
