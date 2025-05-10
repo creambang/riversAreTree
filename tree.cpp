@@ -107,7 +107,7 @@ bool Tree::addFeatureOnSpine(const std::string& prevNode, const std::string& new
     return true;
 }
 
-void Tree::printHelper(Node* node, int indent) {
+void Tree::printHelper(Node* node, int indent, bool isSpine) {
     if (!node) {
         return;
     }
@@ -115,30 +115,39 @@ void Tree::printHelper(Node* node, int indent) {
     std::string position;
     if (node->parent == nullptr) {
         position = "Root";
-    }
-    else if (node->parent->leftTrib == node) {
+    } else if (node->parent->leftTrib == node) {
         position = "Left";
-    }
-    else if (node->parent->rightTrib == node) {
+    } else if (node->parent->rightTrib == node) {
         position = "Right";
-    }
-    else {
+    } else {
         position = "On Spine";
     }
 
-    std::cout << std::string(indent*2, ' ') << node->name << " [Position: " << position << ", Type: " << node->type << "]\n";
+    // Print the current node
+    if (isSpine) {
+        // Spine nodes are printed in the "centered" column without "Position: "
+        std::cout << std::string(20, ' ') << node->name << " [Type: " << node->type << "]\n";
+    } else if (node->parent && node->parent->leftTrib == node) {
+        // Left tributaries cascade visually to the left
+        std::cout << std::string(indent * 2, ' ') << node->name << " [Position: " << position << ", Type: " << node->type << "]\n";
+    } else if (node->parent && node->parent->rightTrib == node) {
+        // Right tributaries cascade visually to the right
+        std::cout << std::string(20 + indent * 2, ' ') << node->name << " [Position: " << position << ", Type: " << node->type << "]\n";
+    }
 
-    printHelper(node->leftTrib, indent+1);
-    printHelper(node->rightTrib, indent+1);
-    printHelper(node->next, indent);
+    // Recursively print left and right tributaries
+    printHelper(node->leftTrib, indent + 1, false);
+    printHelper(node->rightTrib, indent + 1, false);
+
+    // Recursively print the next spine node
+    printHelper(node->next, indent, true);
 }
 
 void Tree::printTree() {
     if (!root) {
         std::cout << "<Empty Tree>\n";
-    } 
-    else {
-        printHelper(root, 0);
+    } else {
+        printHelper(root, 0, true); // Start with the root as a spine node
     }
 }
 
