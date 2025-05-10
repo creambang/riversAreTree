@@ -125,19 +125,19 @@ void Tree::printHelper(Node* node, int indent, bool isSpine) {
 
     // Print the current node
     if (isSpine) {
-        // Spine nodes are printed in the "centered" column without "Position: "
+        // Spine nodes are printed in the "centered" column
         std::cout << std::string(20, ' ') << node->name << " [Type: " << node->type << "]\n";
     } else if (node->parent && node->parent->leftTrib == node) {
-        // Left tributaries cascade visually to the left
-        std::cout << std::string(indent * 2, ' ') << node->name << " [Position: " << position << ", Type: " << node->type << "]\n";
+        // Left tributaries are slightly indented to the left of the parent
+        std::cout << std::string(14, ' ') << node->name << " [Type: " << node->type << "]\n";
     } else if (node->parent && node->parent->rightTrib == node) {
-        // Right tributaries cascade visually to the right
-        std::cout << std::string(20 + indent * 2, ' ') << node->name << " [Position: " << position << ", Type: " << node->type << "]\n";
+        // Right tributaries are slightly indented to the right of the parent
+        std::cout << std::string(32, ' ') << node->name << " [Type: " << node->type << "]\n";
     }
 
     // Recursively print left and right tributaries
-    printHelper(node->leftTrib, indent + 1, false);
-    printHelper(node->rightTrib, indent + 1, false);
+    printHelper(node->leftTrib, indent, false);
+    printHelper(node->rightTrib, indent, false);
 
     // Recursively print the next spine node
     printHelper(node->next, indent, true);
