@@ -17,9 +17,6 @@ int main() {
     river.addFeatureOnSpine("Lower Colombia", "Astoria", "City");
     river.addFeatureOnSpine("Astoria", "St. Helens", "City");
     river.addFeatureOnSpine("St. Helens", "Portland", "City");
-
-    Node* temp = river.findNode("Snake Trit")->parent;
-    std::cout << temp->name << std::endl;
     
     // Print the tree structure
     river.printTree();
