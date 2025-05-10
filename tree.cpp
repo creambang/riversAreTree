@@ -282,8 +282,7 @@ void Tree::destroy(Node* node) {
     delete node;
 }
 
-void Tree::saveHelper(std::ofstream& out, Node* node)
-{
+void Tree::saveHelper(std::ofstream& out, Node* node) {
     char flag = node ? 1 : 0;
     out.write(&flag, sizeof(flag));
     if (!node) {
@@ -303,15 +302,13 @@ void Tree::saveHelper(std::ofstream& out, Node* node)
     saveHelper(out, node->next);
 }
 
-void Tree::save(const std::string& filename)
-{
+void Tree::save(const std::string& filename) {
     std::ofstream out(filename, std::ios::binary);
     saveHelper(out, root);
     out.close();
 }
 
-Node* Tree::loadHelper(std::ifstream& in, Node* parent)
-{
+Node* Tree::loadHelper(std::ifstream& in, Node* parent) {
     char flag = 0;
     if (!in.read(&flag, sizeof(flag)) || flag == 0) {
         return nullptr;
@@ -336,8 +333,7 @@ Node* Tree::loadHelper(std::ifstream& in, Node* parent)
     return node;
 }
 
-void Tree::load(const std::string& filename)
-{
+void Tree::load(const std::string& filename) {
     destroy(root);
     root = nullptr;
 
