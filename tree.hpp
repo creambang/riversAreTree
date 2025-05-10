@@ -35,6 +35,7 @@ class Tree {
         Node* findNode(const std::string& name);
         bool addFeatureOnBranch(const std::string& parentName, const std::string& childName, const std::string& type, bool left);
         bool addFeatureOnSpine(const std::string& prevNode, const std::string& newNode, const std::string& type);
+        void printHelper(Node *node, int indent, bool isSpine);
         void printTree();
         void traverseTree();
         void save(const std::string& filename);
