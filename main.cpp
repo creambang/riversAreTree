@@ -1,12 +1,6 @@
 #include "tree.hpp"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstdio> 
-#include <cassert> 
 
 int main() {
-    // Create a tree structure for the Columbia River
     Tree river;
     river.addFeatureOnSpine("", "Lower Colombia", "Mouth");
     river.addFeatureOnBranch("Lower Colombia", "Columbia River", "River", true);
@@ -40,11 +34,6 @@ int main() {
     river.addFeatureOnSpine("Little Falls", "Long Lake", "Dam");
     river.addFeatureOnSpine("Long Lake", "Nine Mile Falls", "City");
     river.addFeatureOnSpine("Nine Mile Falls", "Monroe", "Dam");
-
-    Node* temp = river.findNode("Snake Trit")->parent;
-    std::cout << temp->name << std::endl;
-=======
->>>>>>> e08e51e4d4957771a58b9a34987da470d6d66847
     
     // Print the tree structure
     river.printTree();
