@@ -43,6 +43,8 @@ int main() {
 
     Node* temp = river.findNode("Snake Trit")->parent;
     std::cout << temp->name << std::endl;
+=======
+>>>>>>> e08e51e4d4957771a58b9a34987da470d6d66847
     
     // Print the tree structure
     river.printTree();
