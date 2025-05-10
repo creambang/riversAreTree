@@ -10,6 +10,7 @@ Description: Implementation of the Binary Tree to represent the Columbia River
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <limits>
 
 Node::Node(const std::string& node, const std::string& type) {
     this->name = node;
@@ -89,8 +90,11 @@ bool Tree::addFeatureOnBranch(const std::string& parentName, const std::string& 
 
 bool Tree::addFeatureOnSpine(const std::string& prevNode, const std::string& newNode, const std::string& type) {
     if (!root) {
-        root = new Node(newNode, type);
-        return true;
+        if (prevNode.empty()) {
+            root = new Node(newNode, type);
+            return true;
+        }
+        return false;
     }
 
     Node* currParent = findNode(prevNode);
@@ -107,7 +111,7 @@ void Tree::printHelper(Node* node, int indent) {
     if (!node) {
         return;
     }
-    
+
     std::string position;
     if (node->parent == nullptr) {
         position = "Root";
@@ -138,6 +142,28 @@ void Tree::printTree() {
     }
 }
 
+Node* Tree::findPrevOnSpineHelper(Node* node, Node* target) {
+    if (!node) {
+        return nullptr;
+    }
+    if (node->next == target) {
+        return node;
+    }
+    Node* found = findPrevOnSpineHelper(node->leftTrib, target);
+    if (found) {
+        return found;
+    }
+    found = findPrevOnSpineHelper(node->rightTrib, target);
+    if (found) {
+        return found;
+    }
+    return findPrevOnSpineHelper(node->next, target);
+}
+
+Node* Tree::findPrevOnSpine(Node* target) {
+    return findPrevOnSpineHelper(root, target);
+}
+
 void Tree::traverseTree() {
     if (!root) {
         std::cout << "Tree is empty.\n";
@@ -146,14 +172,27 @@ void Tree::traverseTree() {
 
     Node* currNode = root;
     char choice;
+
     while (true) {
-        std::cout << "\nCurrent: " << currNode->name << " [" << currNode->type << "]\n" << "Commands: \n\tL=left tributary \n\tR=right tributary \n\tP=parent  \n\tN=next  \n\tQ=quit\n> ";
+        std::cout << "\nCurrent: " << currNode->name
+                  << " [" << currNode->type << "]\n"
+                  << "Commands:\n"
+                  << "\tL = left tributary\n"
+                  << "\tR = right tributary\n"
+                  << "\tP = parent\n"
+                  << "\tN = next on spine\n"
+                  << "\tB = back\n"
+                  << "\tA = add feature here\n"
+                  << "\tS = show tree\n"
+                  << "\tQ = quit\n"
+                  << "> ";
         std::cin.clear();
         std::cin >> choice;
+
         if (!std::cin || choice == 'Q') {
             break;
         }
-        if (choice == 'L' && currNode->leftTrib) {
+        else if (choice == 'L' && currNode->leftTrib) {
             currNode = currNode->leftTrib;
         }
         else if (choice == 'R' && currNode->rightTrib) {
@@ -162,11 +201,63 @@ void Tree::traverseTree() {
         else if (choice == 'P' && currNode->parent) {
             currNode = currNode->parent;
         }
+        else if (choice == 'S') {
+            printTree();
+        }
         else if (choice == 'N' && currNode->next) {
             currNode = currNode->next;
         }
+        else if (choice == 'B') {
+            Node* prev = findPrevOnSpine(currNode);
+            if (!prev && currNode->parent) {
+                prev = currNode->parent;
+            }
+            if (prev) {
+                currNode = prev;
+            }
+            else {
+                std::cout << "  -- no previous node\n";
+            }
+        }
+        else if (choice == 'A') {
+            char addChoice;
+            std::cout << "Add (B)ranch or (S)pine? ";
+            std::cin >> addChoice;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            if (addChoice == 'B') {
+                std::string childName, type;
+                char dir;
+                std::cout << "  Enter branch name: ";
+                std::getline(std::cin, childName);
+                std::cout << "  Enter type: ";
+                std::getline(std::cin, type);
+                std::cout << "  Left or Right (L/R)? ";
+                std::cin >> dir;
+
+                bool ok = addFeatureOnBranch(currNode->name, childName, type, (dir == 'L'));
+                std::cout << (ok
+                              ? "  Branch added.\n"
+                              : "  Failed to add branch.\n");
+            }
+            else if (addChoice == 'S') {
+                std::string newName, type;
+                std::cout << "  Enter spine feature name: ";
+                std::getline(std::cin, newName);
+                std::cout << "  Enter type: ";
+                std::getline(std::cin, type);
+
+                bool ok = addFeatureOnSpine(currNode->name, newName, type);
+                std::cout << (ok
+                              ? "  Spine feature added.\n"
+                              : "  Failed to add spine feature.\n");
+            }
+            else {
+                std::cout << "  Invalid add option.\n";
+            }
+        }
         else {
-            std::cout << "Invalid move.\n";
+            std::cout << "Invalid command.\n";
         }
     }
 }
@@ -182,55 +273,57 @@ void Tree::destroy(Node* node) {
     delete node;
 }
 
-// save: helper function to serialize the tree to a binary file
-// I consulted LLM models to help with this process
-void Tree::saveHelper(std::ofstream& out, Node* node) {
-    char flag = 1;
-    if (!node) {
-        flag = 0;
-    }
+void Tree::saveHelper(std::ofstream& out, Node* node)
+{
+    char flag = node ? 1 : 0;
     out.write(&flag, sizeof(flag));
     if (!node) {
         return;
     }
 
-    size_t nameLen = node->name.size();
-    out.write(reinterpret_cast<char*>(&nameLen), sizeof(nameLen));
-    out.write(node->name.data(), nameLen);
+    size_t len = node->name.size();
+    out.write(reinterpret_cast<char*>(&len), sizeof(len));
+    out.write(node->name.data(), len);
 
-    size_t typeLen = node->type.size();
-    out.write(reinterpret_cast<char*>(&typeLen), sizeof(typeLen));
-    out.write(node->type.data(), typeLen);
+    len = node->type.size();
+    out.write(reinterpret_cast<char*>(&len), sizeof(len));
+    out.write(node->type.data(), len);
 
     saveHelper(out, node->leftTrib);
     saveHelper(out, node->rightTrib);
     saveHelper(out, node->next);
 }
 
-void Tree::save(const std::string& filename) {
+void Tree::save(const std::string& filename)
+{
     std::ofstream out(filename, std::ios::binary);
     saveHelper(out, root);
     out.close();
 }
 
-Node* Tree::loadHelper(std::ifstream& in, Node* parent) {
-    char flag;
+Node* Tree::loadHelper(std::ifstream& in, Node* parent)
+{
+    char flag = 0;
     if (!in.read(&flag, sizeof(flag)) || flag == 0) {
         return nullptr;
     }
 
-    size_t nameLen;
-    in.read(reinterpret_cast<char*>(&nameLen), sizeof(nameLen));
-    std::string name(nameLen, '\0');
-    in.read(&name[0], nameLen);
+    size_t len = 0;
+    in.read(reinterpret_cast<char*>(&len), sizeof(len));
+    std::string name(len, '\0');
+    in.read(&name[0], len);
 
-    size_t typeLen;
-    in.read(reinterpret_cast<char*>(&typeLen), sizeof(typeLen));
-    std::string type(typeLen, '\0');
-    in.read(&type[0], typeLen);
+    in.read(reinterpret_cast<char*>(&len), sizeof(len));
+    std::string type(len, '\0');
+    in.read(&type[0], len);
 
+    Node* node = new Node(name, type);
+    node->parent = parent;
 
-    Node* node = new Node(name, type, parent, loadHelper(in, node), loadHelper(in, node), loadHelper(in, parent));
+    node->leftTrib = loadHelper(in, node);
+    node->rightTrib = loadHelper(in, node);
+    node->next = loadHelper(in, parent);
+
     return node;
 }
 
