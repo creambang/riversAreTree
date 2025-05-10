@@ -46,6 +46,8 @@ class Tree {
         void printHelper(Node* node, int indent);
         void saveHelper(std::ofstream& out, Node* node);
         Node* loadHelper(std::ifstream& in, Node* parent);
+        Node* findPrevOnSpineHelper(Node* node, Node* target);
+        Node* findPrevOnSpine(Node* target);
 };
 
 #endif
