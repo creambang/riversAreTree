@@ -99,7 +99,7 @@ bool Tree::addFeatureOnSpine(const std::string& prevNode, const std::string& new
     }
 
     currParent->next = new Node(newNode, type);
-    currParent->next->parent = currParent->parent;
+    currParent->next->parent = currParent;
     return true;
 }
 
@@ -107,8 +107,23 @@ void Tree::printHelper(Node* node, int indent) {
     if (!node) {
         return;
     }
+    
+    std::string position;
+    if (node->parent == nullptr) {
+        position = "Root";
+    }
+    else if (node->parent->leftTrib == node) {
+        position = "Left";
+    }
+    else if (node->parent->rightTrib == node) {
+        position = "Right";
+    }
+    else {
+        position = "On Spine";
+    }
 
-    std::cout << std::string(indent*2, ' ') << node->name << " [" << node->type << "]\n";
+    std::cout << std::string(indent*2, ' ') << node->name << " [Position: " << position << ", Type: " << node->type << "]\n";
+
     printHelper(node->leftTrib, indent+1);
     printHelper(node->rightTrib, indent+1);
     printHelper(node->next, indent);

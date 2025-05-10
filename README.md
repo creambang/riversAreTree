@@ -12,3 +12,8 @@ Use doubly linked list to structure the tree
 ```bash
 make
 ```
+
+## How to test?
+```bash
+make test
+```
